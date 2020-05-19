@@ -39,7 +39,7 @@
   </div>
   <div class="card-body">
     <blockquote id="post-comment">
-      {{!-- <form action="/images/{{ image.uniqueId }}/comment" method="POST">
+      <form action="/images/{{ image.uniqueId }}/comment" method="POST">
         <div class="form-group">
           <input type="text" class="form-control" name="name" placeholder="Name">
         </div>
@@ -54,10 +54,10 @@
             <i class="fa fa-comment"></i> Post
           </button>
         </div>
-      </form>       --}}
+      </form>
     </blockquote>
     <ul class="list-group p-4">
-      {{!-- {{#each comments}}
+      {{#each comments}}
       <li class="list-group-item">
         <div class="row">
           <a href="#" class="col text-center">
@@ -71,7 +71,7 @@
           </blockquote>
         </div>
       </li>
-      {{/each}} --}}
+      {{/each}}
     </ul>
   </div>
 </div>

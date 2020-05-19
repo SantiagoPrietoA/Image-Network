@@ -1,16 +1,19 @@
 const fs = require("fs-extra");
 const ctrl = {};
 const path = require("path");
+const md5 = require("md5");
 const { randomNumber } = require("../helpers/libs");
 
-const { Image } = require("../models");
+const { Image, Comment } = require("../models");
 
 ctrl.getImage = async (req, res) => {
   const image = await Image.findOne({
     filename: { $regex: req.params.image_id },
   });
-  console.log(image);
-  res.render("image", { image });
+  const comments = await Comment.find({
+    image_id: image._id,
+  });
+  res.render("image", { image, comments });
 };
 
 ctrl.create = async (req, res) => {
@@ -54,7 +57,19 @@ ctrl.create = async (req, res) => {
 
 ctrl.like = (req, res) => res.json({ message: "like" });
 
-ctrl.comment = (req, res) => res.json({ message: "comment" });
+ctrl.comment = async (req, res) => {
+  const image = await Image.findOne({
+    filename: { $regex: req.params.image_id },
+  });
+
+  if (image) {
+    const newComment = new Comment(req.body);
+    newComment.image_id = image._id;
+    newComment.gravatar = md5(newComment.email);
+    await newComment.save();
+    res.redirect("/images/" + image.uniqueId);
+  }
+};
 
 ctrl.remove = (req, res) => res.json({ message: "delete" });
 
