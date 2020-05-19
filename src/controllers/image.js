@@ -5,7 +5,13 @@ const { randomNumber } = require("../helpers/libs");
 
 const { Image } = require("../models");
 
-ctrl.getImage = (req, res) => res.json({ message: "getImage" });
+ctrl.getImage = async (req, res) => {
+  const image = await Image.findOne({
+    filename: { $regex: req.params.image_id },
+  });
+  console.log(image);
+  res.render("image", { image });
+};
 
 ctrl.create = async (req, res) => {
   const saveImage = async () => {
@@ -28,13 +34,14 @@ ctrl.create = async (req, res) => {
       ) {
         // you wil need the public/temp path or this will throw an error
         await fs.rename(imageTempPath, targetPath);
+        // add in db
         const newImg = new Image({
           title: req.body.title,
           filename: imgUrl + ext,
           description: req.body.description,
         });
         const imageSaved = await newImg.save();
-        res.redirect("/images/");
+        res.redirect("/images/" + imgUrl);
       } else {
         await fs.unlink(imageTempPath);
         res.status(500).json({ error: "Only Images are allowed" });
