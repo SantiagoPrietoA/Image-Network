@@ -3,11 +3,12 @@ const ctrl = {};
 const path = require("path");
 const md5 = require("md5");
 const { randomNumber } = require("../helpers/libs");
+const sidebar = require("../helpers/sidebar");
 
 const { Image, Comment } = require("../models");
 
 ctrl.getImage = async (req, res) => {
-  const viewModel = { image: {}, comments: {} };
+  let viewModel = { image: {}, comments: {} };
   const image = await Image.findOne({
     filename: { $regex: req.params.image_id },
   });
@@ -19,6 +20,7 @@ ctrl.getImage = async (req, res) => {
       image_id: image._id,
     });
     viewModel.comments = comments;
+    viewModel = await sidebar(viewModel);
 
     res.render("image", viewModel);
   } else {
