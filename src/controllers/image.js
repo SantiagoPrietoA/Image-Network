@@ -94,6 +94,18 @@ ctrl.comment = async (req, res) => {
   }
 };
 
-ctrl.remove = (req, res) => res.json({ message: "delete" });
+ctrl.remove = async (req, res) => {
+  const image = await Image.findOne({
+    filename: { $regex: req.params.image_id },
+  });
+  if (image) {
+    await fs.unlink(path.resolve("./src/public/upload/" + image.filename));
+    await Comment.deleteOne({ image_id: image._id });
+    await image.remove();
+    res.json(true);
+  } else {
+    res.status(500).json({ error: "internal error" });
+  }
+};
 
 module.exports = ctrl;
